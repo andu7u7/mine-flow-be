@@ -1,9 +1,26 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { MailService } from 'src/mail/mail.service';
+import { Prisma, Users } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly mailService: MailService) {}
+  constructor(private prismaService: PrismaService) {}
+
+  async createUser(data: Prisma.UsersCreateInput): Promise<Users> {
+    const validTitular = await this.verifyUserTitle(data.titular_ingemmet);
+    if (!validTitular.status) {
+      throw new BadRequestException(
+        `El titular ${data.titular_ingemmet} no es válido en el servicio de geocatmin.`,
+      );
+    }
+    return await this.prismaService.users.create({ data });
+  }
+
+  async getOneUser(id: number): Promise<Users | null> {
+    return await this.prismaService.users.findUnique({
+      where: { id },
+    });
+  }
 
   async verifyUserTitle(nombreTitular: string): Promise<{ status: boolean }> {
     const GEOCATMIN_BASE_QUERY_URL =
@@ -25,16 +42,6 @@ export class UserService {
     }
 
     const data = (await req.json()) as { count: number };
-
-    this.mailService
-      .sendEmail(
-        'ar0330yt@gmail.com',
-        'Importante',
-        `El usuario ${nombreTitular} ha sido verificado.`,
-      )
-      .catch((error) => {
-        console.error('Error al enviar el correo:', error);
-      });
 
     return { status: data.count > 0 };
   }

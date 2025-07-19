@@ -14,3 +14,29 @@ model Concesiones {
   link      String? @db.VarChar(255)
   procesado Boolean @default(false)
 }
+
+model Resoluciones {
+  id          Int     @id @default(autoincrement())
+  link        String? @db.VarChar(255)
+  categoria   String? @db.VarChar(255)
+  descripcion String?
+  procesado   Boolean @default(false)
+  resumen     String?
+}
+
+model Boletines {
+  id          Int      @id @default(autoincrement())
+  link        String?  @db.VarChar(255)
+  edicion     String?  @db.VarChar(255)
+  fecha       String?  @db.VarChar(255)
+  categoria   String?  @db.VarChar(255)
+  descripcion String?
+  procesado   Boolean? @default(false)
+  resumen     String?
+}
+
+model Users {
+  id               Int    @id @default(autoincrement())
+  nombre_empleado  String @db.VarChar(255)
+  titular_ingemmet String @db.VarChar(255)
+}
