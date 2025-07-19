@@ -1,7 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class UserService {
+  constructor(private readonly mailService: MailService) {}
+
   async verifyUserTitle(nombreTitular: string): Promise<{ status: boolean }> {
     const GEOCATMIN_BASE_QUERY_URL =
       'https://geocatmin.ingemmet.gob.pe/arcgis/rest/services/WGS84_18/WEBGIS_CATASTRO_MINERO_WGS84_18/MapServer/0/query';
@@ -22,6 +25,17 @@ export class UserService {
     }
 
     const data = (await req.json()) as { count: number };
+
+    this.mailService
+      .sendEmail(
+        'ar0330yt@gmail.com',
+        'Importante',
+        `El usuario ${nombreTitular} ha sido verificado.`,
+      )
+      .catch((error) => {
+        console.error('Error al enviar el correo:', error);
+      });
+
     return { status: data.count > 0 };
   }
 }

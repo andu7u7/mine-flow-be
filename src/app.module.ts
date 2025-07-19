@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ConcesionesModule } from './concesiones/concesiones.module';
 import { UserController } from './user/user.controller';
 import { UserModule } from './user/user.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UserModule } from './user/user.module';
     PrismaModule,
     ConcesionesModule,
     UserModule,
+    MailModule,
   ],
   controllers: [],
   providers: [],
