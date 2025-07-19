@@ -16,6 +16,17 @@ export class UserService {
     return await this.prismaService.users.create({ data });
   }
 
+  async getOneUserByName(name: string): Promise<Users | null> {
+    return await this.prismaService.users.findFirst({
+      where: {
+        nombre_empleado: {
+          contains: name.trim(),
+          mode: 'insensitive',
+        },
+      },
+    });
+  }
+
   async getOneUser(id: number): Promise<Users | null> {
     return await this.prismaService.users.findUnique({
       where: { id },

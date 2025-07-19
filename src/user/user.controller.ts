@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  NotFoundException,
   Param,
   Post,
 } from '@nestjs/common';
@@ -14,10 +15,23 @@ import { Prisma, Users } from '@prisma/client';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get()
+  @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async getUser(@Body() data: Prisma.UsersCreateInput): Promise<Users> {
-    return await this.userService.createUser(data);
+  async getUser(@Param('id') id: number): Promise<Users | null> {
+    const user = await this.userService.getOneUser(id);
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    return user;
+  }
+
+  @Get('search/:name')
+  async searchUserByName(@Param('name') name: string): Promise<Users | null> {
+    const user = await this.userService.getOneUserByName(name);
+    if (!user) {
+      throw new NotFoundException(`User with name ${name} not found`);
+    }
+    return user;
   }
 
   @Post()
