@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ParserService {
-  constructor(private prismaService: PrismaService) {}
-
   processHtml(htmlContent: string): any {
     console.log('Recibido HTML para procesar.');
 
@@ -17,9 +14,5 @@ export class ParserService {
     };
 
     return resultJson;
-  }
-
-  async getConcesiones(): Promise<any[]> {
-    return await this.prismaService.concesiones.findMany();
   }
 }

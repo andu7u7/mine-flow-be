@@ -1,11 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class N8nService {
-  private readonly n8nUrl = process.env.URL_N8N as string;
+  constructor(private readonly configService: ConfigService) {}
 
   async testing(): Promise<any> {
-    const req = await fetch(this.n8nUrl, {
+    const n8nUrl = this.configService.get<string>('URL_N8N');
+
+    if (!n8nUrl) {
+      throw new Error('URL_N8N is not defined in the environment variables');
+    }
+
+    const req = await fetch(n8nUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

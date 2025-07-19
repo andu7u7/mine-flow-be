@@ -6,7 +6,6 @@ import {
   HttpStatus,
   UsePipes,
   ValidationPipe,
-  Get,
 } from '@nestjs/common';
 import { ParserService } from './parser.service';
 import { ParseHtmlDto } from './dto/parse-html.dto';
@@ -20,12 +19,5 @@ export class ParserController {
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async parseHtml(@Body() parseHtmlDto: ParseHtmlDto): Promise<any> {
     return await this.parserService.processHtml(parseHtmlDto.htmlContent);
-  }
-
-  @Get('concesiones')
-  @HttpCode(HttpStatus.OK)
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  async getAllConcesiones(): Promise<any> {
-    return await this.parserService.getConcesiones();
   }
 }
