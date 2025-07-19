@@ -17,7 +17,7 @@ import { Concesiones, Prisma } from '@prisma/client';
 export class ConcesionesController {
   constructor(private readonly concesionesService: ConcesionesService) {}
 
-  @Get()
+  @Get('/')
   @HttpCode(HttpStatus.OK)
   async getAllConcesiones(): Promise<Concesiones[]> {
     return await this.concesionesService.concesiones();
@@ -26,6 +26,9 @@ export class ConcesionesController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async getOneConcesion(@Param('id') id: string): Promise<Concesiones | null> {
+    if (!id || id.trim() === '' || isNaN(+id)) {
+      throw new NotFoundException('Concesion ID is required');
+    }
     const concesion = await this.concesionesService.concesion(+id);
     if (!concesion) {
       throw new NotFoundException(`Concesion with id ${id} not found`);
@@ -41,26 +44,26 @@ export class ConcesionesController {
     return await this.concesionesService.createConcesion(data);
   }
 
-  @Delete(':id')
+  @Delete('/:id')
   @HttpCode(HttpStatus.OK)
   async deleteConcesion(@Param('id') id: string): Promise<Concesiones | null> {
-    const concesion = await this.concesionesService.deleteConcesion(+id);
-    if (!concesion) {
+    try {
+      return await this.concesionesService.deleteConcesion(+id);
+    } catch (error) {
       throw new NotFoundException(`Concesion with id ${id} not found`);
     }
-    return concesion;
   }
 
-  @Put(':id')
+  @Put('/:id')
   @HttpCode(HttpStatus.OK)
   async updateConcesion(
     @Param('id') id: string,
     @Body() data: Concesiones,
   ): Promise<Concesiones> {
-    const concesion = await this.concesionesService.updateConcesion(+id, data);
-    if (!concesion) {
+    try {
+      return await this.concesionesService.updateConcesion(+id, data);
+    } catch (error) {
       throw new NotFoundException(`Concesion with id ${id} not found`);
     }
-    return concesion;
   }
 }
